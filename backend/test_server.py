@@ -2,10 +2,6 @@
 Integration tests for Scout backend API.
 Tests game flow from initialization through completion.
 """
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../scout'))
-
 import pytest
 import requests
 import time

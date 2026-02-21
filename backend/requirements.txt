@@ -2,3 +2,4 @@ flask
 flask-cors
 pytest
 requests
+git+https://github.com/myselph/ml.git#subdirectory=scout

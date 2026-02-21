@@ -14,7 +14,7 @@ source ../../../.venv/bin/activate
 
 # Install dependencies if needed
 echo "Ensuring dependencies are installed..."
-pip install -q flask flask-cors pytest requests
+pip install -r requirements.txt
 
 # Start server
 echo "Starting Flask server on http://localhost:5000..."
