@@ -16,7 +16,14 @@ from players import PlanningPlayer
 from serialization import serialize_game_state, serialize_move, deserialize_move
 
 app = Flask(__name__)
-CORS(app)
+# Allow requests from production Vercel domain and local development origins
+CORS(app, origins=[
+    "https://scout-app-kappa.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000"
+], supports_credentials=True)
 
 # Redis setup for session storage
 redis_url = os.environ.get("KV_URL", os.environ.get("REDIS_URL", "redis://localhost:6379"))
