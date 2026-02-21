@@ -4,4 +4,4 @@ pytest
 requests
 redis
 fakeredis
-scout-engine @ git+https://github.com/myselph/ml.git#subdirectory=scout
+scout-engine @ git+https://github.com/myselph/scout-ai.git
