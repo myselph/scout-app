@@ -421,6 +421,7 @@ function App() {
       <GameOverModal
         isOpen={showGameOverModal}
         scores={gameState.scores}
+        finishedReason={gameState.finished_reason}
         onNewGame={handleNewGame}
       />
     </div>

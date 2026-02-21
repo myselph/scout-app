@@ -78,5 +78,6 @@ def serialize_game_state(gs: GameState) -> dict:
         "table": [serialize_card(card) for card in gs.table],
         "scores": gs.scores,
         "can_scout_and_show": gs.can_scout_and_show,
-        "is_finished": gs.is_finished()
+        "is_finished": gs.is_finished(),
+        "finished_reason": gs.finished.name if hasattr(gs.finished, 'name') else str(gs.finished)
     }

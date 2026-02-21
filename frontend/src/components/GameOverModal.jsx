@@ -7,9 +7,24 @@ import './GameOverModal.css';
  * 
  * @param {boolean} isOpen - Whether modal is open
  * @param {array} scores - Array of player scores
+ * @param {string} finishedReason - The reason the game ended
  * @param {function} onNewGame - Handler for new game button
  */
-export default function GameOverModal({ isOpen, scores = [], onNewGame }) {
+function formatReason(reason) {
+    if (!reason) return '';
+    switch (reason) {
+        case 'FINISHED_EMPTY_HANDS':
+            return 'A player emptied their hand.';
+        case 'FINISHED_TOO_MANY_SCOUTS':
+            return 'A round completed without any Shows.';
+        case 'FINISHED_TOO_MANY_STEPS':
+            return 'Maximum number of moves reached.';
+        default:
+            return '';
+    }
+}
+
+export default function GameOverModal({ isOpen, scores = [], finishedReason, onNewGame }) {
     if (!isOpen) return null;
 
     // Find winner (highest score)
@@ -20,6 +35,12 @@ export default function GameOverModal({ isOpen, scores = [], onNewGame }) {
         <div className="modal-overlay" data-testid="game-over-modal">
             <div className="modal-content">
                 <h2>Game Over!</h2>
+
+                {finishedReason && formatReason(finishedReason) && (
+                    <div className="finished-reason" style={{ textAlign: 'center', marginBottom: '1rem', fontStyle: 'italic', color: 'var(--text-secondary, #666)' }}>
+                        {formatReason(finishedReason)}
+                    </div>
+                )}
 
                 <div className="scores-list">
                     {scores.map((score, index) => (
