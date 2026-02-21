@@ -6,6 +6,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import uuid
 import time
+import os
+import pickle
+import redis
 from typing import Optional
 
 from game_state import GameState
@@ -15,24 +18,30 @@ from serialization import serialize_game_state, serialize_move, deserialize_move
 app = Flask(__name__)
 CORS(app)
 
-# In-memory session storage
-# sessions[session_id] = {
-#     "game_state": GameState,
-#     "players": [None, PlanningPlayer(), ...],  # Human is player 0
-#     "created_at": timestamp,
-#     "last_access": timestamp
-# }
-sessions = {}
+# Redis setup for session storage
+redis_url = os.environ.get("KV_URL", os.environ.get("REDIS_URL", "redis://localhost:6379"))
+redis_client = redis.Redis.from_url(redis_url)
+try:
+    redis_client.ping()
+except redis.ConnectionError:
+    import fakeredis
+    print("WARNING: Could not connect to Redis, using fakeredis for local development.")
+    redis_client = fakeredis.FakeRedis()
 
 
 def get_session(session_id: str) -> Optional[dict]:
-    """Retrieve a session and update last access time."""
-    if session_id not in sessions:
+    """Retrieve a session from Redis and update last access time."""
+    data = redis_client.get(f"session:{session_id}")
+    if not data:
         return None
-    
-    session = sessions[session_id]
+    session = pickle.loads(data)
     session["last_access"] = time.time()
     return session
+
+
+def save_session(session_id: str, session: dict):
+    """Save a session to Redis with 24h expiration."""
+    redis_client.setex(f"session:{session_id}", 86400, pickle.dumps(session))
 
 
 @app.route('/new_game', methods=['POST'])
@@ -72,12 +81,13 @@ def new_game():
     session_id = str(uuid.uuid4())
     
     # Store session
-    sessions[session_id] = {
+    session = {
         "game_state": game_state,
         "players": players,
         "created_at": time.time(),
         "last_access": time.time()
     }
+    save_session(session_id, session)
     
     return jsonify({"session_id": session_id})
 
@@ -181,6 +191,9 @@ def flip_hand():
     # Execute flip
     game_state.maybe_flip_hand(flip_fns)
     
+    # Save back to Redis
+    save_session(session_id, session)
+    
     return jsonify({"status": "ok"})
 
 
@@ -249,6 +262,9 @@ def advance():
         info_state = game_state.info_state()
         move = player.select_move(info_state)
         game_state.move(move)
+    
+    # Save back to Redis
+    save_session(session_id, session)
     
     return jsonify({
         "status": "ok",
