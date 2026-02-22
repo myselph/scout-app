@@ -26,6 +26,7 @@ function App() {
   const [debugMode, setDebugMode] = useState(false);
   const [showFlipModal, setShowFlipModal] = useState(false);
   const [showGameOverModal, setShowGameOverModal] = useState(false);
+  const [opponentType, setOpponentType] = useState('PlanningPlayer');
 
   // Interaction state
   const [selectedTableCard, setSelectedTableCard] = useState(null); // {index, flip}
@@ -76,8 +77,8 @@ function App() {
       clearInteractionState();
       setShowGameOverModal(false);
 
-      // Create new game with specified number of players
-      const result = await api.newGame(playerCount, 0);
+      // Create new game with specified number of players and opponent type
+      const result = await api.newGame(playerCount, 0, opponentType);
       setSessionId(result.session_id);
 
       // Fetch initial state
@@ -320,6 +321,20 @@ function App() {
       <div className="app">
         <div className="welcome">
           <h1>Scout Card Game</h1>
+
+          <div className="opponent-selection-container" style={{ margin: '20px 0', textAlign: 'center' }}>
+            <label htmlFor="opponent-select" style={{ color: 'white', marginRight: '10px' }}>Opponent Type:</label>
+            <select
+              id="opponent-select"
+              value={opponentType}
+              onChange={(e) => setOpponentType(e.target.value)}
+              style={{ padding: '8px', borderRadius: '4px', background: '#333', color: 'white', border: '1px solid #555' }}
+            >
+              <option value="PlanningPlayer">Planning Player</option>
+              <option value="NeuralPlayer">Neural Player</option>
+            </select>
+          </div>
+
           <div className="player-count-buttons">
             <button
               className="start-button"
@@ -392,6 +407,7 @@ function App() {
             <PlayerRow
               key={index}
               playerIndex={index}
+              playerClass={gameState.player_classes ? gameState.player_classes[index] : (index === 0 ? 'Human' : 'PlanningPlayer')}
               hand={index === 0 ? humanHand : hand}
               score={gameState.scores[index]}
               canScoutAndShow={gameState.can_scout_and_show[index]}

@@ -18,6 +18,21 @@ from game_state import GameState
 from players import PlanningPlayer
 from serialization import serialize_game_state, serialize_move, deserialize_move
 
+try:
+    from self_play_agents import SimpleAgentCollection
+    from self_play import NeuralPlayer
+    import torch
+    
+    # Load the agent globally to avoid loading weights on every request
+    logging.info("Loading pre-trained NeuralPlayer agent...")
+    _global_neural_agent = SimpleAgentCollection.load_default_agent()
+except ImportError as e:
+    logging.warning(f"Failed to import NeuralPlayer dependencies: {e}. NeuralPlayer will not be available.")
+    _global_neural_agent = None
+except Exception as e:
+    logging.warning(f"Failed to load NeuralPlayer agent weights: {e}. NeuralPlayer will not be available.")
+    _global_neural_agent = None
+
 app = Flask(__name__)
 # Allow requests from production Vercel domain and local development origins
 CORS(app, origins=[
@@ -76,6 +91,7 @@ def new_game():
     data = request.json
     num_players = data.get('num_players')
     dealer = data.get('dealer')
+    opponent_type = data.get('opponent_type', 'PlanningPlayer')
     
     # Validate inputs
     if not isinstance(num_players, int) or num_players < 3 or num_players > 5:
@@ -88,7 +104,14 @@ def new_game():
     game_state = GameState(num_players, dealer)
     
     # Create AI players (human is player 0, so None for index 0)
-    players = [None] + [PlanningPlayer() for _ in range(num_players - 1)]
+    players = [None]
+    for _ in range(num_players - 1):
+        if opponent_type == "NeuralPlayer" and _global_neural_agent is not None:
+            players.append(NeuralPlayer(_global_neural_agent))
+        else:
+            if opponent_type == "NeuralPlayer":
+                logging.warning("NeuralPlayer requested but agent not loaded, falling back to PlanningPlayer")
+            players.append(PlanningPlayer())
     
     # Generate session ID
     session_id = str(uuid.uuid4())
@@ -137,9 +160,16 @@ def get_state():
         return jsonify({"error": "Invalid session_id"}), 404
     
     game_state = session["game_state"]
+    players = session["players"]
     
     # Serialize game state
     state_data = serialize_game_state(game_state)
+    
+    # Include player classes for frontend display
+    player_classes = ["Human"]
+    for i in range(1, game_state.num_players):
+        player_classes.append(players[i].__class__.__name__)
+    state_data["player_classes"] = player_classes
     
     # If it's the human player's turn and game is not finished, include possible moves
     possible_moves = None
