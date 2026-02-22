@@ -67,10 +67,13 @@ For Vercel deployment, I use a monorepo deployment; that is, I added two project
 there are no Vercel-specific dependencies or configurations. This could probably be improved a bunch (eg using the
 "related projects" functionality of Vercel to set the backend URL automatically, or having both frontend+backend share the
 same domain & use relative paths), but will do for now.
+I also use Redis/Upstash for state management; this required configuring a Redis instance on the dashboard and connecting
+it to the backend project; that will then set the REDIS_URL and other environment variables. Use Python's logging module
+to get logs on the Vercel dashboard (print() does not show up) and ensure everything works.
 
 ## TODO
 
-1. The reason why a game ended should be displayed in the Game Over dialog; currently, when a game ends due to N-1 scouts in a row, the dialog just says "Game Over" and it's not obvious why since all players still hold cards.
+1. Scout-and-Show has a bug; when scouting a card from a single-card-table (maybe in other cases too?), I cannot select all possible cards to show.
 1. The initial landing page should display an error if it cannot reach the backend.
 1. For N players, Scout consists of N rounds, each with a different dealer; but the web app is currently limited to letting the human player be the dealer.
 

@@ -146,7 +146,7 @@ def get_state():
     if game_state.current_player == 0 and not game_state.is_finished():
         if game_state.initial_flip_executed:
             info_state = game_state.info_state()
-            possible_moves = [serialize_move(move) for move in info_state.possible_moves()]
+            possible_moves = [serialize_move(move) for move in info_state.possible_moves(coalesce=False)]
     
     return jsonify({
         "game_state": state_data,
