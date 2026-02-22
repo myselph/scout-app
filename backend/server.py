@@ -27,9 +27,10 @@ CORS(app, origins=[
 
 # Redis setup for session storage
 redis_url = os.environ.get("KV_URL", os.environ.get("REDIS_URL", "redis://localhost:6379"))
-redis_client = redis.Redis.from_url(redis_url)
 try:
+    redis_client = redis.Redis.from_url(redis_url)
     redis_client.ping()
+    print(f"Connected to Redis at {redis_url}")
 except redis.ConnectionError:
     import fakeredis
     print("WARNING: Could not connect to Redis, using fakeredis for local development.")
