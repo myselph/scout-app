@@ -22,9 +22,11 @@ import './PlayerRow.css';
  * @param {boolean} showScoutAndShowButton - Whether to show Scout & Show button
  * @param {boolean} scoutAndShowActive - Whether Scout & Show mode is active
  * @param {function} onScoutAndShowClick - Click handler for Scout & Show button
+ * @param {string} playerClass - Name of the player class (e.g. PlanningPlayer)
  */
 export default function PlayerRow({
     playerIndex,
+    playerClass = null,
     hand = [],
     score = 0,
     canScoutAndShow = false,
@@ -52,7 +54,7 @@ export default function PlayerRow({
             {/* Header row with player info, score, S&S tag, and buttons */}
             <div className="player-header">
                 <div className="player-label">
-                    {isHuman ? 'You' : `Player ${playerIndex + 1}`}
+                    {isHuman ? 'You' : `Player ${playerIndex + 1} (${playerClass || 'AI'})`}
                     {isCurrentPlayer && <span className="turn-indicator"> ← Turn</span>}
                 </div>
 

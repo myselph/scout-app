@@ -19,10 +19,11 @@ function logAPI(method, endpoint, params, result) {
  * Create a new game session
  * @param {number} numPlayers - Number of players (3-5)
  * @param {number} dealer - Dealer index (0 to numPlayers-1)
+ * @param {string} opponentType - Opponent class type (e.g., 'PlanningPlayer', 'NeuralPlayer')
  * @returns {Promise<{session_id: string}>}
  */
-export async function newGame(numPlayers, dealer) {
-    const params = { num_players: numPlayers, dealer };
+export async function newGame(numPlayers, dealer, opponentType = 'PlanningPlayer') {
+    const params = { num_players: numPlayers, dealer, opponent_type: opponentType };
 
     const response = await fetch(`${API_BASE_URL}/new_game`, {
         method: 'POST',

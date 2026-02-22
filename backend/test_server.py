@@ -21,11 +21,11 @@ class TestClient:
         self.base_url = base_url
         self.session_id: Optional[str] = None
     
-    def new_game(self, num_players: int, dealer: int) -> str:
+    def new_game(self, num_players: int, dealer: int, opponent_type: str = "PlanningPlayer") -> str:
         """Create a new game and store the session ID."""
         response = requests.post(
             f"{self.base_url}/new_game",
-            json={"num_players": num_players, "dealer": dealer}
+            json={"num_players": num_players, "dealer": dealer, "opponent_type": opponent_type}
         )
         assert response.status_code == 200, f"Failed to create game: {response.text}"
         data = response.json()
@@ -77,6 +77,31 @@ def test_new_game():
     assert state["game_state"]["dealer"] == 0
     assert state["game_state"]["current_player"] == 0
     assert state["game_state"]["is_finished"] is False
+
+    # Check player classes (1 Human + 2 AI)
+    player_classes = state["game_state"].get("player_classes", [])
+    assert len(player_classes) == 3
+    assert player_classes[0] == "Human"
+    assert player_classes[1] == "PlanningPlayer"
+
+
+def test_new_game_neural_player():
+    """Test creating a new game with NeuralPlayer."""
+    client = TestClient()
+    session_id = client.new_game(num_players=3, dealer=0, opponent_type="NeuralPlayer")
+    
+    assert session_id is not None
+    assert len(session_id) > 0
+    
+    # Verify we can get the initial state
+    state = client.get_state()
+    assert state["game_state"]["num_players"] == 3
+    
+    # Check player classes
+    player_classes = state["game_state"].get("player_classes", [])
+    assert len(player_classes) == 3
+    assert player_classes[0] == "Human"
+    assert player_classes[1] == "NeuralPlayer"
 
 
 def test_flip_hand():
