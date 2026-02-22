@@ -1,6 +1,9 @@
 import pickle
 import sys
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 from game_state import GameState
 from players import PlanningPlayer
@@ -18,7 +21,7 @@ session = {
 try:
     data = pickle.dumps(session)
     loaded_session = pickle.loads(data)
-    print("Pickle successful!")
-    print(loaded_session["game_state"].num_players)
+    logging.info("Pickle successful!")
+    logging.info(loaded_session["game_state"].num_players)
 except Exception as e:
-    print(f"Pickle failed: {e}")
+    logging.error(f"Pickle failed: {e}")

@@ -5,7 +5,10 @@ Tests game flow from initialization through completion.
 import pytest
 import requests
 import time
+import logging
 from typing import Optional
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Base URL for the API
 BASE_URL = "http://localhost:5000"
@@ -124,8 +127,8 @@ def test_full_game_human_dealer():
         state = client.get_state()
         
         if state["game_state"]["is_finished"]:
-            print(f"Game finished after {move_count} moves")
-            print(f"Final scores: {state['game_state']['scores']}")
+            logging.info(f"Game finished after {move_count} moves")
+            logging.info(f"Final scores: {state['game_state']['scores']}")
             break
         
         current_player = state["game_state"]["current_player"]
@@ -162,8 +165,8 @@ def test_full_game_human_not_dealer():
         state = client.get_state()
         
         if state["game_state"]["is_finished"]:
-            print(f"Game finished after {move_count} moves")
-            print(f"Final scores: {state['game_state']['scores']}")
+            logging.info(f"Game finished after {move_count} moves")
+            logging.info(f"Final scores: {state['game_state']['scores']}")
             break
         
         current_player = state["game_state"]["current_player"]
@@ -208,7 +211,6 @@ def test_session_isolation():
 
 
 if __name__ == "__main__":
-    print("Running tests...")
-    print("Make sure the server is running on http://localhost:5000")
-    print()
+    logging.info("Running tests...")
+    logging.info("Make sure the server is running on http://localhost:5000")
     pytest.main([__file__, "-v"])

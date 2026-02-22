@@ -9,7 +9,10 @@ import time
 import os
 import pickle
 import redis
+import logging
 from typing import Optional
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 from game_state import GameState
 from players import PlanningPlayer
@@ -30,10 +33,10 @@ redis_url = os.environ.get("KV_URL", os.environ.get("REDIS_URL", "redis://localh
 try:
     redis_client = redis.Redis.from_url(redis_url)
     redis_client.ping()
-    print(f"Connected to Redis at {redis_url}")
+    logging.info(f"Connected to Redis at {redis_url}")
 except redis.ConnectionError:
     import fakeredis
-    print("WARNING: Could not connect to Redis, using fakeredis for local development.")
+    logging.warning("WARNING: Could not connect to Redis, using fakeredis for local development.")
     redis_client = fakeredis.FakeRedis()
 
 
