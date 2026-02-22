@@ -30,8 +30,10 @@ CORS(app, origins=[
 
 # Redis setup for session storage
 redis_url = os.environ.get("KV_URL", os.environ.get("REDIS_URL", "redis://localhost:6379"))
+logging.info(f"Using Redis URL: {redis_url}")
 try:
     redis_client = redis.Redis.from_url(redis_url)
+    logging.info(f"Redis client: {redis_client}")
     redis_client.ping()
     logging.info(f"Connected to Redis at {redis_url}")
 except redis.ConnectionError:
