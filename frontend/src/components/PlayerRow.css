@@ -94,6 +94,17 @@
     color: #999;
 }
 
+.dealer-indicator {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    min-width: 50px;
+    background: #2196F3;
+    color: white;
+}
+
 .player-actions {
     display: flex;
     gap: 8px;

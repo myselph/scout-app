@@ -19,6 +19,7 @@ function App() {
   const [sessionId, setSessionId] = useState(null);
   const [gameState, setGameState] = useState(null);
   const [possibleMoves, setPossibleMoves] = useState(null);
+  const [dealer, setDealer] = useState(0);
 
   // UI state
   const [playMode, setPlayMode] = useState('auto'); // 'auto' or 'manual'
@@ -72,13 +73,20 @@ function App() {
     try {
       // If called from a button click, numPlayers will be the event object
       // Check if it's a number, otherwise use default
-      const playerCount = typeof numPlayers === 'number' ? numPlayers : 4;
+      let isNewSequence = typeof numPlayers === 'number';
+      const playerCount = isNewSequence ? numPlayers : (gameState ? gameState.hands.length : 4);
+
+      let nextDealer = 0;
+      if (!isNewSequence && gameState) {
+        nextDealer = (dealer + 1) % playerCount;
+      }
+      setDealer(nextDealer);
 
       clearInteractionState();
       setShowGameOverModal(false);
 
       // Create new game with specified number of players and opponent type
-      const result = await api.newGame(playerCount, 0, opponentType);
+      const result = await api.newGame(playerCount, nextDealer, opponentType);
       setSessionId(result.session_id);
 
       // Fetch initial state
@@ -410,6 +418,7 @@ function App() {
               playerClass={gameState.player_classes ? gameState.player_classes[index] : (index === 0 ? 'Human' : 'PlanningPlayer')}
               hand={index === 0 ? humanHand : hand}
               score={gameState.scores[index]}
+              isDealer={gameState.dealer === index}
               canScoutAndShow={gameState.can_scout_and_show[index]}
               isHuman={index === 0}
               isCurrentPlayer={gameState.current_player === index}

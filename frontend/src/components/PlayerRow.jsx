@@ -29,6 +29,7 @@ export default function PlayerRow({
     playerClass = null,
     hand = [],
     score = 0,
+    isDealer = false,
     canScoutAndShow = false,
     isHuman = false,
     isCurrentPlayer = false,
@@ -61,6 +62,12 @@ export default function PlayerRow({
                 <div className="player-score" data-testid={`player-${playerIndex}-score`}>
                     Score: {score}
                 </div>
+
+                {isDealer && (
+                    <div className="dealer-indicator" data-testid={`player-${playerIndex}-dealer-indicator`}>
+                        Dealer
+                    </div>
+                )}
 
                 <div
                     className={`scout-show-indicator ${canScoutAndShow ? 'active' : 'inactive'}`}
