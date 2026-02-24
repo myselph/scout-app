@@ -71,6 +71,12 @@ I also use Redis/Upstash for state management; this required configuring a Redis
 it to the backend project; that will then set the REDIS_URL and other environment variables. Use Python's logging module
 to get logs on the Vercel dashboard (print() does not show up) and ensure everything works.
 
+## Adding new AI players
+
+1. Implement a new Player subclass - see scout-ai repo, players.py, and take some inspiration from PlanningPlayer or any of the other examples.
+2. Import that player in the backend' server.py - scout-app repo - and add it to the SUPPORTED_PLAYERS dict. 
+3. (Re)start servers or redeploy -> the frontend dropdown menu should contain your player.
+
 ## TODO
 
 1. Code cleanup: MultiRoundGameState is a somewhat unfortunate mess, because it was tacked onto GameState. Specifically, its state is not always consistent with GameState's state, e.g. its cumulative scores do not update automatically when a game ends; that requires separate calls.

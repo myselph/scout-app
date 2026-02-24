@@ -140,3 +140,23 @@ export async function nextRound(sessionId) {
     logAPI('POST', '/next_round', params, result);
     return result;
 }
+
+/**
+ * Get list of supported AI players
+ * @returns {Promise<{players: string[]}>}
+ */
+export async function listPlayers() {
+    const response = await fetch(`${API_BASE_URL}/list_players`, {
+        method: 'GET'
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        logAPI('GET', '/list_players', null, { error });
+        throw new Error(error.error || 'Failed to list players');
+    }
+
+    const result = await response.json();
+    logAPI('GET', '/list_players', null, result);
+    return result;
+}

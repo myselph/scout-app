@@ -16,23 +16,13 @@ from typing import Optional
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 from game_state import GameState, MultiRoundGameState, FinishedStatus
-from players import PlanningPlayer
+from players import PlanningPlayer, GreedyShowPlayerWithFlip
 from serialization import serialize_multi_round_game_state, serialize_move, deserialize_move
 
-try:
-    from self_play_agents import SimpleAgentCollection
-    from self_play import NeuralPlayer
-    import torch
-    
-    # Load the agent globally to avoid loading weights on every request
-    logging.info("Loading pre-trained NeuralPlayer agent...")
-    _global_neural_agent = SimpleAgentCollection.load_default_agent()
-except ImportError as e:
-    logging.warning(f"Failed to import NeuralPlayer dependencies: {e}. NeuralPlayer will not be available.")
-    _global_neural_agent = None
-except Exception as e:
-    logging.warning(f"Failed to load NeuralPlayer agent weights: {e}. NeuralPlayer will not be available.")
-    _global_neural_agent = None
+SUPPORTED_PLAYERS = {
+    "PlanningPlayer": lambda: PlanningPlayer(),
+    "GreedyShowPlayerWithFlip": lambda: GreedyShowPlayerWithFlip(),
+}
 
 app = Flask(__name__)
 # Allow requests from production Vercel domain and local development origins
@@ -97,15 +87,13 @@ def new_game():
     # Create game state
     multi_round_state = MultiRoundGameState(num_players)
     
+    # Get the factory function for the requested AI player, fallback to PlanningPlayer if not found
+    player_factory = SUPPORTED_PLAYERS.get(opponent_type, SUPPORTED_PLAYERS["PlanningPlayer"])
+    
     # Create AI players (human is player 0, so None for index 0)
     players = [None]
     for _ in range(num_players - 1):
-        if opponent_type == "NeuralPlayer" and _global_neural_agent is not None:
-            players.append(NeuralPlayer(_global_neural_agent))
-        else:
-            if opponent_type == "NeuralPlayer":
-                logging.warning("NeuralPlayer requested but agent not loaded, falling back to PlanningPlayer")
-            players.append(PlanningPlayer())
+        players.append(player_factory())
     
     # Generate session ID
     session_id = str(uuid.uuid4())
@@ -120,6 +108,21 @@ def new_game():
     save_session(session_id, session)
     
     return jsonify({"session_id": session_id})
+
+
+@app.route('/list_players', methods=['GET'])
+def list_players():
+    """
+    Get the list of supported AI players.
+    
+    Response:
+    {
+        "players": [str, ...]
+    }
+    """
+    return jsonify({
+        "players": list(SUPPORTED_PLAYERS.keys())
+    })
 
 
 @app.route('/state', methods=['GET'])

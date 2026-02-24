@@ -27,6 +27,25 @@ function App() {
   const [showGameOverModal, setShowGameOverModal] = useState(false);
   const [showRoundOverModal, setShowRoundOverModal] = useState(false);
   const [opponentType, setOpponentType] = useState('PlanningPlayer');
+  const [availableOpponents, setAvailableOpponents] = useState([]);
+
+  // Fetch available opponents on mount
+  useEffect(() => {
+    async function fetchPlayers() {
+      try {
+        const data = await api.listPlayers();
+        setAvailableOpponents(data.players || []);
+        if (data.players && data.players.length > 0) {
+          setOpponentType(prevType =>
+            data.players.includes(prevType) ? prevType : data.players[0]
+          );
+        }
+      } catch (error) {
+        console.error('Failed to fetch players:', error);
+      }
+    }
+    fetchPlayers();
+  }, []);
 
   // Interaction state
   const [selectedTableCard, setSelectedTableCard] = useState(null); // {index, flip}
@@ -355,8 +374,13 @@ function App() {
               onChange={(e) => setOpponentType(e.target.value)}
               style={{ padding: '8px', borderRadius: '4px', background: '#333', color: 'white', border: '1px solid #555' }}
             >
-              <option value="PlanningPlayer">Planning Player</option>
-              <option value="NeuralPlayer">Neural Player</option>
+              {availableOpponents.length > 0 ? (
+                availableOpponents.map(opp => (
+                  <option key={opp} value={opp}>{opp}</option>
+                ))
+              ) : (
+                <option value={opponentType}>{opponentType}</option>
+              )}
             </select>
           </div>
 
