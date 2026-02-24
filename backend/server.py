@@ -10,13 +10,14 @@ import os
 import pickle
 import redis
 import logging
+import re
 from typing import Optional
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-from game_state import GameState
+from game_state import GameState, MultiRoundGameState
 from players import PlanningPlayer
-from serialization import serialize_game_state, serialize_move, deserialize_move
+from serialization import serialize_multi_round_game_state, serialize_move, deserialize_move
 
 try:
     from self_play_agents import SimpleAgentCollection
@@ -37,10 +38,8 @@ app = Flask(__name__)
 # Allow requests from production Vercel domain and local development origins
 CORS(app, origins=[
     "https://scout-app-kappa.vercel.app",
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:3000"
+    re.compile(r"^https?://localhost:\d+$"),
+    re.compile(r"^https?://127\.0\.0\.1:\d+$")
 ], supports_credentials=True)
 
 # Redis setup for session storage
@@ -79,8 +78,7 @@ def new_game():
     
     Request body:
     {
-        "num_players": int (3-5),
-        "dealer": int (0 to num_players-1)
+        "num_players": int (3-5)
     }
     
     Response:
@@ -90,18 +88,14 @@ def new_game():
     """
     data = request.json
     num_players = data.get('num_players')
-    dealer = data.get('dealer')
     opponent_type = data.get('opponent_type', 'PlanningPlayer')
     
     # Validate inputs
     if not isinstance(num_players, int) or num_players < 3 or num_players > 5:
         return jsonify({"error": "num_players must be between 3 and 5"}), 400
     
-    if not isinstance(dealer, int) or dealer < 0 or dealer >= num_players:
-        return jsonify({"error": f"dealer must be between 0 and {num_players - 1}"}), 400
-    
     # Create game state
-    game_state = GameState(num_players, dealer)
+    multi_round_state = MultiRoundGameState(num_players)
     
     # Create AI players (human is player 0, so None for index 0)
     players = [None]
@@ -118,7 +112,7 @@ def new_game():
     
     # Store session
     session = {
-        "game_state": game_state,
+        "multi_round_state": multi_round_state,
         "players": players,
         "created_at": time.time(),
         "last_access": time.time()
@@ -138,14 +132,21 @@ def get_state():
     
     Response:
     {
-        "game_state": {
-            "current_player": int,
+        "multi_round_game_state": {
+            "cum_scores": [int, ...],
             "dealer": int,
-            "hands": [[card, ...], ...],
-            "table": [card, ...],
-            "scores": [int, ...],
-            "can_scout_and_show": [bool, ...],
-            "is_finished": bool
+            "num_players": int,
+            "rounds_finished": int,
+            "is_game_finished": bool,
+            "round_state": {
+                "current_player": int,
+                "hands": [[card, ...], ...],
+                "table": [card, ...],
+                "scores": [int, ...],
+                "can_scout_and_show": [bool, ...],
+                "is_finished": bool
+            },
+            "player_classes": [str, ...]
         },
         "possible_moves": [move, ...] | null  // Only if current_player == 0
     }
@@ -159,15 +160,16 @@ def get_state():
     if not session:
         return jsonify({"error": "Invalid session_id"}), 404
     
-    game_state = session["game_state"]
+    multi_round_state = session["multi_round_state"]
+    game_state = multi_round_state.game_state
     players = session["players"]
     
     # Serialize game state
-    state_data = serialize_game_state(game_state)
+    state_data = serialize_multi_round_game_state(multi_round_state)
     
     # Include player classes for frontend display
     player_classes = ["Human"]
-    for i in range(1, game_state.num_players):
+    for i in range(1, multi_round_state.num_players):
         player_classes.append(players[i].__class__.__name__)
     state_data["player_classes"] = player_classes
     
@@ -179,10 +181,48 @@ def get_state():
             possible_moves = [serialize_move(move) for move in info_state.possible_moves(coalesce=False)]
     
     return jsonify({
-        "game_state": state_data,
+        "multi_round_game_state": state_data,
         "possible_moves": possible_moves
     })
 
+
+@app.route('/next_round', methods=['POST'])
+def next_round():
+    """
+    Start the next round if the game is not finished.
+    Expects JSON: { "session_id": "uuid-string" }
+    Returns: { "has_next_round": bool }
+    """
+    data = request.json
+    if not data or 'session_id' not in data:
+        return jsonify({"error": "Missing session_id"}), 400
+
+    session_id = data['session_id']
+    session = get_session(session_id)
+
+    if not session:
+        return jsonify({"error": "Invalid or expired session"}), 404
+
+    multi_round_state = session["multi_round_state"]
+    has_next_round = multi_round_state.next_round()
+
+    # Save updated state
+    save_session(session_id, session)
+
+    return jsonify({
+        "has_next_round": has_next_round
+    })
+
+@app.route('/debug_set_finished', methods=['POST'])
+def debug_set_finished():
+    """Test-only route to force finish a game state for testing."""
+    data = request.json
+    session_id = data.get('session_id')
+    session = get_session(session_id)
+    if session:
+        session["multi_round_state"].game_state._finished = True
+        save_session(session_id, session)
+    return jsonify({"status": "ok"})
 
 @app.route('/flip_hand', methods=['POST'])
 def flip_hand():
@@ -214,7 +254,8 @@ def flip_hand():
     if not session:
         return jsonify({"error": "Invalid session_id"}), 404
     
-    game_state = session["game_state"]
+    multi_round_state = session["multi_round_state"]
+    game_state = multi_round_state.game_state
     players = session["players"]
     
     if game_state.initial_flip_executed:
@@ -271,7 +312,8 @@ def advance():
     if not session:
         return jsonify({"error": "Invalid session_id"}), 404
     
-    game_state = session["game_state"]
+    multi_round_state = session["multi_round_state"]
+    game_state = multi_round_state.game_state
     players = session["players"]
     
     if not game_state.initial_flip_executed:

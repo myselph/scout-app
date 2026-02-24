@@ -19,14 +19,13 @@ function App() {
   const [sessionId, setSessionId] = useState(null);
   const [gameState, setGameState] = useState(null);
   const [possibleMoves, setPossibleMoves] = useState(null);
-  const [dealer, setDealer] = useState(0);
-
   // UI state
   const [playMode, setPlayMode] = useState('auto'); // 'auto' or 'manual'
   const [speed, setSpeed] = useState(1); // 1, 2, or 4
   const [debugMode, setDebugMode] = useState(false);
   const [showFlipModal, setShowFlipModal] = useState(false);
   const [showGameOverModal, setShowGameOverModal] = useState(false);
+  const [showRoundOverModal, setShowRoundOverModal] = useState(false);
   const [opponentType, setOpponentType] = useState('PlanningPlayer');
 
   // Interaction state
@@ -56,12 +55,15 @@ function App() {
 
     try {
       const data = await api.getState(sessionId);
-      setGameState(data.game_state);
+
+      setGameState(data.multi_round_game_state);
       setPossibleMoves(data.possible_moves);
 
-      // Check if game is finished
-      if (data.game_state.is_finished) {
+      // Check if game is finished or just the round
+      if (data.multi_round_game_state.is_game_finished) {
         setShowGameOverModal(true);
+      } else if (data.multi_round_game_state.round_state.is_finished) {
+        setShowRoundOverModal(true);
       }
     } catch (error) {
       console.error('Failed to fetch game state:', error);
@@ -74,24 +76,19 @@ function App() {
       // If called from a button click, numPlayers will be the event object
       // Check if it's a number, otherwise use default
       let isNewSequence = typeof numPlayers === 'number';
-      const playerCount = isNewSequence ? numPlayers : (gameState ? gameState.hands.length : 4);
-
-      let nextDealer = 0;
-      if (!isNewSequence && gameState) {
-        nextDealer = (dealer + 1) % playerCount;
-      }
-      setDealer(nextDealer);
+      const playerCount = isNewSequence ? numPlayers : (gameState ? gameState.num_players : 4);
 
       clearInteractionState();
       setShowGameOverModal(false);
+      setShowRoundOverModal(false);
 
       // Create new game with specified number of players and opponent type
-      const result = await api.newGame(playerCount, nextDealer, opponentType);
+      const result = await api.newGame(playerCount, opponentType);
       setSessionId(result.session_id);
 
       // Fetch initial state
       const data = await api.getState(result.session_id);
-      setGameState(data.game_state);
+      setGameState(data.multi_round_game_state);
       setPossibleMoves(null);
 
       // Show flip hand modal
@@ -123,12 +120,32 @@ function App() {
     }
   };
 
+  // Next Round wrapper
+  const handleNextRound = async () => {
+    try {
+      setShowRoundOverModal(false);
+      clearInteractionState();
+
+      const res = await api.nextRound(sessionId);
+      if (res.has_next_round) {
+        // Now fetch state, and it should prompt the human to flip again
+        await fetchGameState();
+        setShowFlipModal(true);
+      } else {
+        setShowGameOverModal(true);
+      }
+    } catch (error) {
+      console.error('Failed to start next round:', error);
+    }
+  };
+
   // Auto-advance for AI players
   useEffect(() => {
     if (!gameState || !sessionId) return;
-    if (gameState.is_finished) return;
+    if (gameState.round_state.is_finished) return;
     if (playMode !== 'auto') return;
-    if (gameState.current_player === 0) return; // Don't auto-advance for human
+    if (gameState.round_state.current_player === 0) return; // Don't auto-advance for human
+    if (showFlipModal) return; // Don't auto-advance while waiting for human to flip hand
 
     // Clear existing timer
     if (autoAdvanceTimer.current) {
@@ -149,14 +166,14 @@ function App() {
         clearTimeout(autoAdvanceTimer.current);
       }
     };
-  }, [gameState, playMode, speed, sessionId]);
+  }, [gameState, playMode, speed, sessionId, showFlipModal]);
 
   // Handle table card click (Scout mode)
   const handleTableCardClick = (index) => {
     if (scoutAndShowMode && scoutMove) return; // Already scouted in S&S mode
 
     const isFirst = index === 0;
-    const isLast = index === gameState.table.length - 1;
+    const isLast = index === gameState.round_state.table.length - 1;
 
     // If clicking non-eligible card (middle cards), cancel Scout
     if (!isFirst && !isLast) {
@@ -177,7 +194,7 @@ function App() {
       setSelectedHandCards([]);
 
       // Show insertion points
-      const hand = tempHand || gameState.hands[0];
+      const hand = tempHand || gameState.round_state.hands[0];
       setInsertionPoints([...Array(hand.length + 1).keys()]);
     }
   };
@@ -199,8 +216,8 @@ function App() {
     if (scoutAndShowMode) {
       // Scout & Show mode: compute temp hand and enter Show mode
       const newTempHand = computeTempHandAfterScout(
-        gameState.hands[0],
-        gameState.table,
+        gameState.round_state.hands[0],
+        gameState.round_state.table,
         isFirst,
         flip,
         insertPos
@@ -300,7 +317,7 @@ function App() {
   // Check if Scout & Show button should be visible
   const isScoutAndShowButtonVisible = () => {
     if (!possibleMoves) return false;
-    if (gameState.current_player !== 0) return false;
+    if (gameState.round_state.current_player !== 0) return false;
     return hasScoutAndShowMoves(possibleMoves);
   };
 
@@ -371,16 +388,16 @@ function App() {
     );
   }
 
-  const isHumanTurn = gameState.current_player === 0;
-  const humanHand = tempHand || gameState.hands[0];
+  const isHumanTurn = gameState.round_state.current_player === 0;
+  const humanHand = tempHand || gameState.round_state.hands[0];
 
   // Compute display table (hide scouted card in Scout & Show mode)
-  let displayTable = gameState.table;
+  let displayTable = gameState.round_state.table;
   if (scoutAndShowMode && scoutMove) {
     // Determine which card was scouted (first = left edge, !first = right edge)
-    const scoutedIndex = scoutMove.first ? 0 : gameState.table.length - 1;
+    const scoutedIndex = scoutMove.first ? 0 : gameState.round_state.table.length - 1;
     // Filter out the scouted card from display
-    displayTable = gameState.table.filter((_, idx) => idx !== scoutedIndex);
+    displayTable = gameState.round_state.table.filter((_, idx) => idx !== scoutedIndex);
   }
 
   return (
@@ -411,17 +428,18 @@ function App() {
 
         {/* Player rows */}
         <div className="players">
-          {gameState.hands.map((hand, index) => (
+          {gameState.round_state.hands.map((hand, index) => (
             <PlayerRow
               key={index}
               playerIndex={index}
               playerClass={gameState.player_classes ? gameState.player_classes[index] : (index === 0 ? 'Human' : 'PlanningPlayer')}
               hand={index === 0 ? humanHand : hand}
-              score={gameState.scores[index]}
+              score={gameState.round_state.scores[index]}
+              cumScore={gameState.cum_scores[index]}
               isDealer={gameState.dealer === index}
-              canScoutAndShow={gameState.can_scout_and_show[index]}
+              canScoutAndShow={gameState.round_state.can_scout_and_show[index]}
               isHuman={index === 0}
-              isCurrentPlayer={gameState.current_player === index}
+              isCurrentPlayer={gameState.round_state.current_player === index}
               debugMode={debugMode}
               selectedIndices={index === 0 ? selectedHandCards : []}
               onCardClick={index === 0 && isHumanTurn ? handleHandCardClick : null}
@@ -439,15 +457,26 @@ function App() {
 
       <FlipHandModal
         isOpen={showFlipModal}
-        hand={gameState.hands[0]}
+        hand={gameState.round_state.hands[0]}
         onFlip={handleFlipHand}
       />
 
       <GameOverModal
+        isOpen={showRoundOverModal}
+        scores={gameState.round_state.scores}
+        finishedReason={gameState.round_state.finished_reason}
+        onNewGame={handleNextRound}
+        title="Round Over"
+        buttonText="Next Round"
+      />
+
+      <GameOverModal
         isOpen={showGameOverModal}
-        scores={gameState.scores}
-        finishedReason={gameState.finished_reason}
+        scores={gameState.cum_scores}
+        finishedReason={gameState.round_state.finished_reason}
         onNewGame={handleNewGame}
+        title="Game Over"
+        buttonText="New Game"
       />
     </div>
   );

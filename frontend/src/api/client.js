@@ -18,12 +18,11 @@ function logAPI(method, endpoint, params, result) {
 /**
  * Create a new game session
  * @param {number} numPlayers - Number of players (3-5)
- * @param {number} dealer - Dealer index (0 to numPlayers-1)
  * @param {string} opponentType - Opponent class type (e.g., 'PlanningPlayer', 'NeuralPlayer')
  * @returns {Promise<{session_id: string}>}
  */
-export async function newGame(numPlayers, dealer, opponentType = 'PlanningPlayer') {
-    const params = { num_players: numPlayers, dealer, opponent_type: opponentType };
+export async function newGame(numPlayers, opponentType = 'PlanningPlayer') {
+    const params = { num_players: numPlayers, opponent_type: opponentType };
 
     const response = await fetch(`${API_BASE_URL}/new_game`, {
         method: 'POST',
@@ -114,5 +113,30 @@ export async function advance(sessionId, move = null) {
 
     const result = await response.json();
     logAPI('POST', '/advance', params, result);
+    return result;
+}
+
+/**
+ * Transition to the next round if game is not over
+ * @param {string} sessionId - Session ID
+ * @returns {Promise<{has_next_round: boolean}>}
+ */
+export async function nextRound(sessionId) {
+    const params = { session_id: sessionId };
+
+    const response = await fetch(`${API_BASE_URL}/next_round`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        logAPI('POST', '/next_round', params, { error });
+        throw new Error(error.error || 'Failed to transition to next round');
+    }
+
+    const result = await response.json();
+    logAPI('POST', '/next_round', params, result);
     return result;
 }

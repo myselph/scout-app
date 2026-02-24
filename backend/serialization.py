@@ -7,7 +7,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../scout'))
 
 from common import Scout, Show, ScoutAndShow, Move, Card
-from game_state import GameState
+from game_state import GameState, MultiRoundGameState
 
 
 def serialize_card(card: Card) -> list[int]:
@@ -71,7 +71,6 @@ def serialize_game_state(gs: GameState) -> dict:
     """
     return {
         "num_players": gs.num_players,
-        "dealer": gs.dealer,
         "current_player": gs.current_player,
         "scout_benefactor": gs.scout_benefactor,
         "hands": [[serialize_card(card) for card in hand] for hand in gs.hands],
@@ -80,4 +79,17 @@ def serialize_game_state(gs: GameState) -> dict:
         "can_scout_and_show": gs.can_scout_and_show,
         "is_finished": gs.is_finished(),
         "finished_reason": gs.finished.name if hasattr(gs.finished, 'name') else str(gs.finished)
+    }
+
+def serialize_multi_round_game_state(m_gs: MultiRoundGameState) -> dict:
+    """
+    Serialize MultiRoundGameState.
+    """
+    return {
+        "cum_scores": m_gs.cum_scores,
+        "dealer": m_gs.dealer,
+        "num_players": m_gs.num_players,
+        "rounds_finished": m_gs._rounds_finished,
+        "is_game_finished": m_gs.finished(),
+        "round_state": serialize_game_state(m_gs.game_state)
     }

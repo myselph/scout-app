@@ -73,8 +73,5 @@ to get logs on the Vercel dashboard (print() does not show up) and ensure everyt
 
 ## TODO
 
-1. Scout-and-Show has a bug; when scouting a card from a single-card-table (maybe in other cases too?), I cannot select all possible cards to show.
-1. The initial landing page should display an error if it cannot reach the backend.
-1. For N players, Scout consists of N rounds, each with a different dealer; but the web app is currently limited to letting the human player be the dealer.
-
+1. NeuralPlayer support. Torch is too large to install on vercel.
 

@@ -24,7 +24,7 @@ function formatReason(reason) {
     }
 }
 
-export default function GameOverModal({ isOpen, scores = [], finishedReason, onNewGame }) {
+export default function GameOverModal({ isOpen, scores = [], finishedReason, onNewGame, title = "Game Over!", buttonText = "New Game" }) {
     if (!isOpen) return null;
 
     // Find winner (highest score)
@@ -34,7 +34,7 @@ export default function GameOverModal({ isOpen, scores = [], finishedReason, onN
     return (
         <div className="modal-overlay" data-testid="game-over-modal">
             <div className="modal-content">
-                <h2>Game Over!</h2>
+                <h2>{title}</h2>
 
                 {finishedReason && formatReason(finishedReason) && (
                     <div className="finished-reason" style={{ textAlign: 'center', marginBottom: '1rem', fontStyle: 'italic', color: 'var(--text-secondary, #666)' }}>
@@ -64,7 +64,7 @@ export default function GameOverModal({ isOpen, scores = [], finishedReason, onN
                         onClick={onNewGame}
                         data-testid="game-over-new-game-button"
                     >
-                        New Game
+                        {buttonText}
                     </button>
                 </div>
             </div>

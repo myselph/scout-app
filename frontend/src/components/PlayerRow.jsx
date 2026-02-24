@@ -29,6 +29,7 @@ export default function PlayerRow({
     playerClass = null,
     hand = [],
     score = 0,
+    cumScore = 0,
     isDealer = false,
     canScoutAndShow = false,
     isHuman = false,
@@ -60,7 +61,7 @@ export default function PlayerRow({
                 </div>
 
                 <div className="player-score" data-testid={`player-${playerIndex}-score`}>
-                    Score: {score}
+                    Round / Game Scores: {score} / {cumScore}
                 </div>
 
                 {isDealer && (
