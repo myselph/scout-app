@@ -46,6 +46,33 @@ except redis.ConnectionError:
     redis_client = fakeredis.FakeRedis()
 
 
+def cleanup_old_sessions():
+    """Delete sessions created more than 24 hours ago."""
+    logging.info("Starting cleanup of old sessions...")
+    try:
+        keys = redis_client.keys("session:*")
+        deleted_count = 0
+        current_time = time.time()
+        for key in keys:
+            data = redis_client.get(key)
+            if data:
+                try:
+                    session = pickle.loads(data)
+                    created_at = session.get("created_at", 0)
+                    if current_time - created_at > 86400:
+                        redis_client.delete(key)
+                        deleted_count += 1
+                except Exception as e:
+                    logging.warning(f"Failed to parse session {key}, deleting it. Error: {e}")
+                    redis_client.delete(key)
+                    deleted_count += 1
+        logging.info(f"Cleaned up {deleted_count} old sessions.")
+    except Exception as e:
+        logging.error(f"Error during cleanup of old sessions: {e}")
+
+cleanup_old_sessions()
+
+
 def get_session(session_id: str) -> Optional[dict]:
     """Retrieve a session from Redis and update last access time."""
     data = redis_client.get(f"session:{session_id}")
