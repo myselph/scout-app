@@ -200,7 +200,6 @@ def test_next_round():
     assert state["multi_round_game_state"]["is_game_finished"] is False
     
     # Force the underlying game state to be finished by hitting an internal test-only or mocking route
-    # Since we can't easily mock the session from a different process, let's just use the /debug_set_finished route which we will add.
     requests.post(f"{client.base_url}/debug_set_finished", json={"session_id": client.session_id})
     
     # 2. Call next_round
@@ -216,6 +215,38 @@ def test_next_round():
     new_state = client.get_state()
     assert new_state["multi_round_game_state"]["rounds_finished"] == 1
     assert new_state["multi_round_game_state"]["is_game_finished"] is False
+
+def test_game_over_cumulative_scores():
+    """Test that cumulative scores are set correctly when the game finishes."""
+    client = TestClient()
+    client.new_game(num_players=3)
+    
+    # Round 1 (forces state to finished)
+    requests.post(f"{client.base_url}/debug_set_finished", json={"session_id": client.session_id})
+    # Since we mocked the game completion, scores will be negative (initial state)
+    # We call next_round to push the scores into cum_scores
+    requests.post(f"{client.base_url}/next_round", json={"session_id": client.session_id})
+
+    # Round 2
+    requests.post(f"{client.base_url}/debug_set_finished", json={"session_id": client.session_id})
+    requests.post(f"{client.base_url}/next_round", json={"session_id": client.session_id})
+
+    # Round 3 (Final Round) 
+    # Force finish. This should trigger `MultiRoundGameState.finished()` to evaluate True.
+    requests.post(f"{client.base_url}/debug_set_finished", json={"session_id": client.session_id})
+    
+    # At this precise moment, fetch the state. Game should be recognized as finished
+    # and the cumulative score should be populated.
+    final_state = client.get_state()
+    
+    print(f"DEBUG FINAL STATE => rounds_finished: {final_state['multi_round_game_state']['rounds_finished']}, is_game_finished: {final_state['multi_round_game_state']['is_game_finished']}, round_state.is_finished: {final_state['multi_round_game_state']['round_state']['is_finished']}")
+    
+    assert final_state["multi_round_game_state"]["is_game_finished"] is True
+    assert final_state["multi_round_game_state"]["rounds_finished"] == 2 # 0-indexed rounds counter before true completion
+    
+    # Verify the cumulative scores are not zero.
+    cum_scores = final_state["multi_round_game_state"]["cum_scores"]
+    assert any(score != 0 for score in cum_scores), "Cumulative scores were not aggregated on game finish!"
 
 def test_session_isolation():
     """Test that multiple sessions don't interfere with each other."""

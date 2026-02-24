@@ -15,7 +15,7 @@ from typing import Optional
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-from game_state import GameState, MultiRoundGameState
+from game_state import GameState, MultiRoundGameState, FinishedStatus
 from players import PlanningPlayer
 from serialization import serialize_multi_round_game_state, serialize_move, deserialize_move
 
@@ -220,7 +220,8 @@ def debug_set_finished():
     session_id = data.get('session_id')
     session = get_session(session_id)
     if session:
-        session["multi_round_state"].game_state._finished = True
+        session["multi_round_state"].game_state.finished = FinishedStatus.FINISHED_EMPTY_HANDS
+        session["multi_round_state"].finished()
         save_session(session_id, session)
     return jsonify({"status": "ok"})
 

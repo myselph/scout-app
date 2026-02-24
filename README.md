@@ -73,5 +73,9 @@ to get logs on the Vercel dashboard (print() does not show up) and ensure everyt
 
 ## TODO
 
+1. Code cleanup: MultiRoundGameState is a somewhat unfortunate mess, because it was tacked onto GameState. Specifically, its state is not always consistent with GameState's state, e.g. its cumulative scores do not update automatically when a game ends; that requires separate calls.
+But that is leading to a bunch of confusion in the backend, and also frontend. Specifically, it is unclear when the scores in MultiRoundGameState
+should be updated: as soon as a game is over? When next_round() is called? I think the best solution would be to go through MultiRoundGameState
+and not access GameState directly, but that of course requires a whole bunch of boilerplate redirect code and changes to server.py
 1. NeuralPlayer support. Torch is too large to install on vercel.
 

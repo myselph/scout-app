@@ -85,11 +85,12 @@ def serialize_multi_round_game_state(m_gs: MultiRoundGameState) -> dict:
     """
     Serialize MultiRoundGameState.
     """
+    is_game_finished = m_gs.finished()
     return {
         "cum_scores": m_gs.cum_scores,
         "dealer": m_gs.dealer,
         "num_players": m_gs.num_players,
         "rounds_finished": m_gs._rounds_finished,
-        "is_game_finished": m_gs.finished(),
+        "is_game_finished": is_game_finished,
         "round_state": serialize_game_state(m_gs.game_state)
     }
