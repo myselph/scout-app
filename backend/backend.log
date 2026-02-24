@@ -1,0 +1,100 @@
+Activating virtual environment from ../../../.venv...
+Ensuring dependencies are installed...
+Collecting scout-engine@ git+https://github.com/myselph/scout-ai.git (from -r requirements.txt (line 7))
+  Cloning https://github.com/myselph/scout-ai.git to /tmp/pip-install-3t9mrida/scout-engine_53ab4fba4eda4f829dcfd8599d6dcd14
+  Running command git clone --filter=blob:none --quiet https://github.com/myselph/scout-ai.git /tmp/pip-install-3t9mrida/scout-engine_53ab4fba4eda4f829dcfd8599d6dcd14
+  Resolved https://github.com/myselph/scout-ai.git to commit 21887d5e889007c8a44919eebceaa1ab24579d61
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: flask in /home/myselph/.venv/lib/python3.13/site-packages (from -r requirements.txt (line 1)) (3.1.3)
+Requirement already satisfied: flask-cors in /home/myselph/.venv/lib/python3.13/site-packages (from -r requirements.txt (line 2)) (6.0.2)
+Requirement already satisfied: pytest in /home/myselph/.venv/lib/python3.13/site-packages (from -r requirements.txt (line 3)) (9.0.2)
+Requirement already satisfied: requests in /home/myselph/.venv/lib/python3.13/site-packages (from -r requirements.txt (line 4)) (2.32.5)
+Requirement already satisfied: redis in /home/myselph/.venv/lib/python3.13/site-packages (from -r requirements.txt (line 5)) (7.2.0)
+Requirement already satisfied: fakeredis in /home/myselph/.venv/lib/python3.13/site-packages (from -r requirements.txt (line 6)) (2.34.0)
+Requirement already satisfied: blinker>=1.9.0 in /home/myselph/.venv/lib/python3.13/site-packages (from flask->-r requirements.txt (line 1)) (1.9.0)
+Requirement already satisfied: click>=8.1.3 in /home/myselph/.venv/lib/python3.13/site-packages (from flask->-r requirements.txt (line 1)) (8.3.1)
+Requirement already satisfied: itsdangerous>=2.2.0 in /home/myselph/.venv/lib/python3.13/site-packages (from flask->-r requirements.txt (line 1)) (2.2.0)
+Requirement already satisfied: jinja2>=3.1.2 in /home/myselph/.venv/lib/python3.13/site-packages (from flask->-r requirements.txt (line 1)) (3.1.6)
+Requirement already satisfied: markupsafe>=2.1.1 in /home/myselph/.venv/lib/python3.13/site-packages (from flask->-r requirements.txt (line 1)) (3.0.3)
+Requirement already satisfied: werkzeug>=3.1.0 in /home/myselph/.venv/lib/python3.13/site-packages (from flask->-r requirements.txt (line 1)) (3.1.6)
+Requirement already satisfied: iniconfig>=1.0.1 in /home/myselph/.venv/lib/python3.13/site-packages (from pytest->-r requirements.txt (line 3)) (2.3.0)
+Requirement already satisfied: packaging>=22 in /home/myselph/.venv/lib/python3.13/site-packages (from pytest->-r requirements.txt (line 3)) (26.0)
+Requirement already satisfied: pluggy<2,>=1.5 in /home/myselph/.venv/lib/python3.13/site-packages (from pytest->-r requirements.txt (line 3)) (1.6.0)
+Requirement already satisfied: pygments>=2.7.2 in /home/myselph/.venv/lib/python3.13/site-packages (from pytest->-r requirements.txt (line 3)) (2.19.2)
+Requirement already satisfied: charset_normalizer<4,>=2 in /home/myselph/.venv/lib/python3.13/site-packages (from requests->-r requirements.txt (line 4)) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in /home/myselph/.venv/lib/python3.13/site-packages (from requests->-r requirements.txt (line 4)) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /home/myselph/.venv/lib/python3.13/site-packages (from requests->-r requirements.txt (line 4)) (2.6.3)
+Requirement already satisfied: certifi>=2017.4.17 in /home/myselph/.venv/lib/python3.13/site-packages (from requests->-r requirements.txt (line 4)) (2026.1.4)
+Requirement already satisfied: sortedcontainers>=2 in /home/myselph/.venv/lib/python3.13/site-packages (from fakeredis->-r requirements.txt (line 6)) (2.4.0)
+Forcing upgrade of scout-engine from GitHub to ensure latest version...
+Collecting git+https://github.com/myselph/scout-ai.git
+  Cloning https://github.com/myselph/scout-ai.git to /tmp/pip-req-build-dohqi6nb
+  Running command git clone --filter=blob:none --quiet https://github.com/myselph/scout-ai.git /tmp/pip-req-build-dohqi6nb
+  Resolved https://github.com/myselph/scout-ai.git to commit 21887d5e889007c8a44919eebceaa1ab24579d61
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: scout-engine
+  Building wheel for scout-engine (pyproject.toml): started
+  Building wheel for scout-engine (pyproject.toml): finished with status 'done'
+  Created wheel for scout-engine: filename=scout_engine-0.1.0-py3-none-any.whl size=698928 sha256=0f09f2ab469f9b219105668babb81daf6399a427ba37518a0072a9620cb81755
+  Stored in directory: /tmp/pip-ephem-wheel-cache-i895wkxg/wheels/5b/dc/a2/51d6f99a9a765dc24e86151dcdf5eb24e38c78926bc2bc1735
+Successfully built scout-engine
+Installing collected packages: scout-engine
+  Attempting uninstall: scout-engine
+    Found existing installation: scout-engine 0.1.0
+    Uninstalling scout-engine-0.1.0:
+      Successfully uninstalled scout-engine-0.1.0
+Successfully installed scout-engine-0.1.0
+Starting Flask server on http://localhost:5000...
+2026-02-24 14:38:33,736 - INFO - Loading pre-trained NeuralPlayer agent...
+2026-02-24 14:38:34,529 - INFO - Using Redis URL: redis://localhost:6379
+2026-02-24 14:38:34,529 - INFO - Redis client: <redis.client.Redis(<redis.connection.ConnectionPool(<redis.connection.Connection(host=localhost,port=6379)>)>)>
+2026-02-24 14:38:34,557 - WARNING - WARNING: Could not connect to Redis, using fakeredis for local development.
+/home/myselph/projects/scout-app/backend/server.py:56: DeprecationWarning: Call to '__init__' function with deprecated usage of input argument/s 'retry_on_timeout'. (TimeoutError is included by default.) -- Deprecated since version 6.0.0.
+  redis_client = fakeredis.FakeRedis()
+Using device: cpu
+ * Serving Flask app 'server'
+ * Debug mode: on
+2026-02-24 14:38:34,564 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.86.91:5000
+2026-02-24 14:38:34,564 - INFO - [33mPress CTRL+C to quit[0m
+2026-02-24 14:38:34,564 - INFO -  * Restarting with stat
+2026-02-24 14:38:36,047 - INFO - Loading pre-trained NeuralPlayer agent...
+2026-02-24 14:38:36,765 - INFO - Using Redis URL: redis://localhost:6379
+2026-02-24 14:38:36,765 - INFO - Redis client: <redis.client.Redis(<redis.connection.ConnectionPool(<redis.connection.Connection(host=localhost,port=6379)>)>)>
+2026-02-24 14:38:36,790 - WARNING - WARNING: Could not connect to Redis, using fakeredis for local development.
+/home/myselph/projects/scout-app/backend/server.py:56: DeprecationWarning: Call to '__init__' function with deprecated usage of input argument/s 'retry_on_timeout'. (TimeoutError is included by default.) -- Deprecated since version 6.0.0.
+  redis_client = fakeredis.FakeRedis()
+2026-02-24 14:38:36,796 - WARNING -  * Debugger is active!
+2026-02-24 14:38:36,799 - INFO -  * Debugger PIN: 952-545-693
+2026-02-24 14:55:41,308 - INFO -  * Detected change in '/home/myselph/projects/scout-app/backend/server.py', reloading
+Using device: cpu
+2026-02-24 14:55:42,235 - INFO -  * Restarting with stat
+2026-02-24 14:55:42,761 - INFO - Using Redis URL: redis://localhost:6379
+2026-02-24 14:55:42,761 - INFO - Redis client: <redis.client.Redis(<redis.connection.ConnectionPool(<redis.connection.Connection(host=localhost,port=6379)>)>)>
+2026-02-24 14:55:42,801 - WARNING - WARNING: Could not connect to Redis, using fakeredis for local development.
+/home/myselph/projects/scout-app/backend/server.py:46: DeprecationWarning: Call to '__init__' function with deprecated usage of input argument/s 'retry_on_timeout'. (TimeoutError is included by default.) -- Deprecated since version 6.0.0.
+  redis_client = fakeredis.FakeRedis()
+2026-02-24 14:55:42,818 - WARNING -  * Debugger is active!
+2026-02-24 14:55:42,868 - INFO -  * Debugger PIN: 952-545-693
+2026-02-24 14:56:55,325 - INFO -  * Detected change in '/home/myselph/.venv/lib/python3.13/site-packages/common.py', reloading
+2026-02-24 14:56:55,413 - INFO -  * Restarting with stat
+2026-02-24 14:56:55,672 - INFO - Using Redis URL: redis://localhost:6379
+2026-02-24 14:56:55,673 - INFO - Redis client: <redis.client.Redis(<redis.connection.ConnectionPool(<redis.connection.Connection(host=localhost,port=6379)>)>)>
+2026-02-24 14:56:55,698 - WARNING - WARNING: Could not connect to Redis, using fakeredis for local development.
+/home/myselph/projects/scout-app/backend/server.py:46: DeprecationWarning: Call to '__init__' function with deprecated usage of input argument/s 'retry_on_timeout'. (TimeoutError is included by default.) -- Deprecated since version 6.0.0.
+  redis_client = fakeredis.FakeRedis()
+2026-02-24 14:56:55,711 - WARNING -  * Debugger is active!
+2026-02-24 14:56:55,713 - INFO -  * Debugger PIN: 952-545-693
+./start.sh: line 24: 51228 Killed                  python server.py

@@ -10,12 +10,15 @@ The game engine lives in a [separate repository](https://github.com/myselph/scou
 
 ## Running the App Locally
 
-To run this, install
-- Python 3.9+
-- Node.js (v18+)
-- npm
+To run this, you'll need Python, node, npm.
+Then I suggest to create a Python venv
 
-Then start the frontend and the backend, and navigate to `http://localhost:5173`.
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Then install the frontend and backend dependencies, see below.
 
 ### Running the Backend
 
@@ -60,6 +63,10 @@ The frontend is built with React and Vite. It connects to the backend API to ren
    ```
    The frontend will be available at `http://localhost:5173`.
 
+### Running both backend and frontend
+
+If you've already installed all the dependencies, the `dev.sh` script is a simple way to just stop, start or restart the servers.
+
 
 ## Deploying to Vercel
 
@@ -73,9 +80,9 @@ to get logs on the Vercel dashboard (print() does not show up) and ensure everyt
 
 ## Adding new AI players
 
-1. Implement a new Player subclass - see scout-ai repo, players.py, and take some inspiration from PlanningPlayer or any of the other examples.
-2. Import that player in the backend' server.py - scout-app repo - and add it to the SUPPORTED_PLAYERS dict. 
-3. (Re)start servers or redeploy -> the frontend dropdown menu should contain your player.
+1. Implement a new Player subclass - see [scout-ai](https://github.com/myselph/scout-ai) repo, [players.py](https://github.com/myselph/scout-ai/blob/main/scout_ai/players.py), and take some inspiration from [PlanningPlayer](https://github.com/myselph/scout-ai/blob/main/scout_ai/players.py#L10-L207) or any of the other examples.
+2. Import that player in the backend' [server.py](https://github.com/myselph/scout-app/blob/main/backend/server.py) - scout-app repo - and add it to the [SUPPORTED_PLAYERS](https://github.com/myselph/scout-app/blob/main/backend/server.py#L11-L13) dict. 
+3. (Re)start servers (see above) or redeploy -> the frontend dropdown menu should contain your player.
 
 ## TODO
 

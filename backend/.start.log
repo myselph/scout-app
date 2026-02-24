@@ -1,0 +1,66 @@
+2026-02-24 10:57:36,865 - INFO - Loading pre-trained NeuralPlayer agent...
+2026-02-24 10:57:37,944 - INFO - Using Redis URL: redis://localhost:6379
+2026-02-24 10:57:37,945 - INFO - Redis client: <redis.client.Redis(<redis.connection.ConnectionPool(<redis.connection.Connection(host=localhost,port=6379)>)>)>
+2026-02-24 10:57:37,988 - WARNING - WARNING: Could not connect to Redis, using fakeredis for local development.
+/home/myselph/projects/scout-app/backend/server.py:56: DeprecationWarning: Call to '__init__' function with deprecated usage of input argument/s 'retry_on_timeout'. (TimeoutError is included by default.) -- Deprecated since version 6.0.0.
+  redis_client = fakeredis.FakeRedis()
+Using device: cpu
+ * Serving Flask app 'server'
+ * Debug mode: on
+2026-02-24 10:57:37,997 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.86.91:5000
+2026-02-24 10:57:37,998 - INFO - [33mPress CTRL+C to quit[0m
+2026-02-24 10:57:37,999 - INFO -  * Restarting with stat
+2026-02-24 10:57:40,496 - INFO - Loading pre-trained NeuralPlayer agent...
+2026-02-24 10:57:41,706 - INFO - Using Redis URL: redis://localhost:6379
+2026-02-24 10:57:41,707 - INFO - Redis client: <redis.client.Redis(<redis.connection.ConnectionPool(<redis.connection.Connection(host=localhost,port=6379)>)>)>
+2026-02-24 10:57:41,786 - WARNING - WARNING: Could not connect to Redis, using fakeredis for local development.
+/home/myselph/projects/scout-app/backend/server.py:56: DeprecationWarning: Call to '__init__' function with deprecated usage of input argument/s 'retry_on_timeout'. (TimeoutError is included by default.) -- Deprecated since version 6.0.0.
+  redis_client = fakeredis.FakeRedis()
+2026-02-24 10:57:41,795 - WARNING -  * Debugger is active!
+2026-02-24 10:57:41,800 - INFO -  * Debugger PIN: 130-618-337
+2026-02-24 10:57:41,969 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:41] "POST /new_game HTTP/1.1" 200 -
+2026-02-24 10:57:41,972 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:41] "GET /state?session_id=9d16eb4b-4312-4e7f-a655-23d80946888e HTTP/1.1" 200 -
+2026-02-24 10:57:41,980 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:41] "POST /new_game HTTP/1.1" 200 -
+2026-02-24 10:57:41,986 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:41] "GET /state?session_id=6dbb2561-d2c7-42fe-b16b-d29253f9feb9 HTTP/1.1" 200 -
+2026-02-24 10:57:41,990 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:41] "POST /new_game HTTP/1.1" 200 -
+2026-02-24 10:57:41,993 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:41] "POST /flip_hand HTTP/1.1" 200 -
+2026-02-24 10:57:41,996 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:41] "GET /state?session_id=66eb3d93-ae15-4e55-b3c8-386d47abf539 HTTP/1.1" 200 -
+2026-02-24 10:57:42,000 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /new_game HTTP/1.1" 200 -
+2026-02-24 10:57:42,003 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /flip_hand HTTP/1.1" 200 -
+2026-02-24 10:57:42,006 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "[31m[1mPOST /advance HTTP/1.1[0m" 400 -
+2026-02-24 10:57:42,011 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /new_game HTTP/1.1" 200 -
+2026-02-24 10:57:42,014 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /flip_hand HTTP/1.1" 200 -
+2026-02-24 10:57:42,017 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=6d425d20-69f8-4e04-a55a-e18c775a3030 HTTP/1.1" 200 -
+2026-02-24 10:57:42,020 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /advance HTTP/1.1" 200 -
+2026-02-24 10:57:42,022 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=6d425d20-69f8-4e04-a55a-e18c775a3030 HTTP/1.1" 200 -
+2026-02-24 10:57:42,031 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /advance HTTP/1.1" 200 -
+2026-02-24 10:57:42,034 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=6d425d20-69f8-4e04-a55a-e18c775a3030 HTTP/1.1" 200 -
+2026-02-24 10:57:42,049 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /advance HTTP/1.1" 200 -
+2026-02-24 10:57:42,055 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=6d425d20-69f8-4e04-a55a-e18c775a3030 HTTP/1.1" 200 -
+2026-02-24 10:57:42,061 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /advance HTTP/1.1" 200 -
+2026-02-24 10:57:42,063 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=6d425d20-69f8-4e04-a55a-e18c775a3030 HTTP/1.1" 200 -
+2026-02-24 10:57:42,067 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /advance HTTP/1.1" 200 -
+2026-02-24 10:57:42,069 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=6d425d20-69f8-4e04-a55a-e18c775a3030 HTTP/1.1" 200 -
+2026-02-24 10:57:42,073 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /advance HTTP/1.1" 200 -
+2026-02-24 10:57:42,077 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=6d425d20-69f8-4e04-a55a-e18c775a3030 HTTP/1.1" 200 -
+2026-02-24 10:57:42,081 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /advance HTTP/1.1" 200 -
+2026-02-24 10:57:42,084 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=6d425d20-69f8-4e04-a55a-e18c775a3030 HTTP/1.1" 200 -
+2026-02-24 10:57:42,088 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /advance HTTP/1.1" 200 -
+2026-02-24 10:57:42,092 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=6d425d20-69f8-4e04-a55a-e18c775a3030 HTTP/1.1" 200 -
+2026-02-24 10:57:42,095 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /advance HTTP/1.1" 200 -
+2026-02-24 10:57:42,101 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=6d425d20-69f8-4e04-a55a-e18c775a3030 HTTP/1.1" 200 -
+2026-02-24 10:57:42,105 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /advance HTTP/1.1" 200 -
+2026-02-24 10:57:42,108 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=6d425d20-69f8-4e04-a55a-e18c775a3030 HTTP/1.1" 200 -
+2026-02-24 10:57:42,110 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=6d425d20-69f8-4e04-a55a-e18c775a3030 HTTP/1.1" 200 -
+2026-02-24 10:57:42,115 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /new_game HTTP/1.1" 200 -
+2026-02-24 10:57:42,117 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=1c6fa4d6-9d26-4e28-9d7f-536b023d32ad HTTP/1.1" 200 -
+2026-02-24 10:57:42,120 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /debug_set_finished HTTP/1.1" 200 -
+2026-02-24 10:57:42,123 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /next_round HTTP/1.1" 200 -
+2026-02-24 10:57:42,125 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=1c6fa4d6-9d26-4e28-9d7f-536b023d32ad HTTP/1.1" 200 -
+2026-02-24 10:57:42,129 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /new_game HTTP/1.1" 200 -
+2026-02-24 10:57:42,132 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "POST /new_game HTTP/1.1" 200 -
+2026-02-24 10:57:42,135 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=b49d553b-1629-4f06-9af0-d16d991b0a3b HTTP/1.1" 200 -
+2026-02-24 10:57:42,137 - INFO - 127.0.0.1 - - [24/Feb/2026 10:57:42] "GET /state?session_id=1f76eb68-7283-4a45-95d1-f956625044b1 HTTP/1.1" 200 -
