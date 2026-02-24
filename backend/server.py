@@ -336,7 +336,7 @@ def advance():
         
         # Validate move
         info_state = game_state.info_state()
-        if move not in info_state.possible_moves():
+        if move not in info_state.possible_moves(coalesce=False):
             return jsonify({"error": "Invalid move"}), 400
         
         # Execute move
