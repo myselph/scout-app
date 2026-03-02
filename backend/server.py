@@ -21,9 +21,9 @@ from scout_engine import numpy_neural_player
 from serialization import serialize_multi_round_game_state, serialize_move, deserialize_move
 
 SUPPORTED_PLAYERS = {
-    "NeuralPlayer": lambda: numpy_neural_player.load_default_player()
+    "NeuralPlayer": lambda: numpy_neural_player.load_default_player(),
     "PlanningPlayer": lambda: PlanningPlayer(),
-    "GreedyShowPlayerWithFlip": lambda: GreedyShowPlayerWithFlip(),
+    "GreedyShowPlayerWithFlip": lambda: GreedyShowPlayerWithFlip()
 }
 
 app = Flask(__name__)
