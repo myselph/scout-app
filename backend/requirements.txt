@@ -4,4 +4,5 @@ pytest
 requests
 redis
 fakeredis
+numpy
 scout-engine @ git+https://github.com/myselph/scout-ai.git
