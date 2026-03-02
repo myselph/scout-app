@@ -22,7 +22,7 @@ export default function FlipHandModal({ isOpen, hand = [], onFlip }) {
 
     const handleConfirm = () => {
         onFlip(isFlipped);
-        setIsFlipped(false); // Reset for next time
+        setTimeout(() => setIsFlipped(false), 300); // Reset after modal transition
     };
 
     return (
