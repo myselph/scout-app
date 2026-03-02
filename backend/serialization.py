@@ -2,12 +2,8 @@
 Serialization utilities for Scout game types.
 Converts between Python dataclasses and JSON-compatible dictionaries.
 """
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../scout'))
-
-from common import Scout, Show, ScoutAndShow, Move, Card
-from game_state import GameState, MultiRoundGameState
+from scout_engine.common import Scout, Show, ScoutAndShow, Move, Card
+from scout_engine.game_state import GameState, MultiRoundGameState
 
 
 def serialize_card(card: Card) -> list[int]:

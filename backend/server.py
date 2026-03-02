@@ -15,13 +15,15 @@ from typing import Optional
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-from game_state import GameState, MultiRoundGameState, FinishedStatus
-from players import PlanningPlayer, GreedyShowPlayerWithFlip
+from scout_engine.game_state import GameState, MultiRoundGameState, FinishedStatus
+from scout_engine.players import PlanningPlayer, GreedyShowPlayer
+from scout_engine import numpy_neural_player
 from serialization import serialize_multi_round_game_state, serialize_move, deserialize_move
 
 SUPPORTED_PLAYERS = {
     "PlanningPlayer": lambda: PlanningPlayer(),
     "GreedyShowPlayerWithFlip": lambda: GreedyShowPlayerWithFlip(),
+    "NeuralPlayer": lambda: numpy_neural_player.load_default_player()
 }
 
 app = Flask(__name__)
