@@ -26,7 +26,7 @@ function App() {
   const [showFlipModal, setShowFlipModal] = useState(false);
   const [showGameOverModal, setShowGameOverModal] = useState(false);
   const [showRoundOverModal, setShowRoundOverModal] = useState(false);
-  const [opponentType, setOpponentType] = useState('PlanningPlayer');
+  const [opponentType, setOpponentType] = useState('');
   const [availableOpponents, setAvailableOpponents] = useState([]);
 
   // Fetch available opponents on mount
@@ -36,9 +36,7 @@ function App() {
         const data = await api.listPlayers();
         setAvailableOpponents(data.players || []);
         if (data.players && data.players.length > 0) {
-          setOpponentType(prevType =>
-            data.players.includes(prevType) ? prevType : data.players[0]
-          );
+          setOpponentType(data.players[0]);
         }
       } catch (error) {
         console.error('Failed to fetch players:', error);
