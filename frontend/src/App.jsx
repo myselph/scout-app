@@ -28,10 +28,14 @@ function App() {
   const [showRoundOverModal, setShowRoundOverModal] = useState(false);
   const [opponentType, setOpponentType] = useState('');
   const [availableOpponents, setAvailableOpponents] = useState([]);
+  const [isLoadingPlayers, setIsLoadingPlayers] = useState(true);
+  const [playerFetchError, setPlayerFetchError] = useState(false);
 
   // Fetch available opponents on mount
   useEffect(() => {
     async function fetchPlayers() {
+      setIsLoadingPlayers(true);
+      setPlayerFetchError(false);
       try {
         const data = await api.listPlayers();
         setAvailableOpponents(data.players || []);
@@ -40,10 +44,27 @@ function App() {
         }
       } catch (error) {
         console.error('Failed to fetch players:', error);
+        setPlayerFetchError(true);
+      } finally {
+        setIsLoadingPlayers(false);
       }
     }
     fetchPlayers();
   }, []);
+
+  // Update viewport for mobile zoom in game
+  useEffect(() => {
+    const metaViewport = document.querySelector('meta[name=viewport]');
+    if (metaViewport) {
+      if (gameState) {
+        // Force layout viewport to 800px so phones zoom out to fit the game board
+        metaViewport.setAttribute('content', 'width=800');
+      } else {
+        // Use responsive device-width for the landing page
+        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+      }
+    }
+  }, [gameState]);
 
   // Interaction state
   const [selectedTableCard, setSelectedTableCard] = useState(null); // {index, flip}
@@ -363,28 +384,39 @@ function App() {
       <div className="app">
         <div className="welcome">
           <img
-            src="/jordan_scout.jpg"
+            src="/jordan_scout.png"
             alt="Scout Card Game"
             style={{ maxWidth: '400px', width: '100%', height: 'auto', borderRadius: '15px', boxShadow: '0 8px 24px rgba(0,0,0,0.2)' }}
           />
           <h1>Scout Card Game</h1>
 
-          <div className="opponent-selection-container" style={{ margin: '20px auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="opponent-selection-container" style={{ margin: '20px auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '80px' }}>
             <label htmlFor="opponent-select" style={{ color: '#333', marginBottom: '8px', fontWeight: 'bold', fontSize: '0.85em' }}>Opponent Type:</label>
-            <select
-              id="opponent-select"
-              value={opponentType}
-              onChange={(e) => setOpponentType(e.target.value)}
-              style={{ padding: '8px', borderRadius: '4px', background: 'blue', color: 'white', border: '1px solid darkblue', fontSize: '1.2em' }}
-            >
-              {availableOpponents.length > 0 ? (
-                availableOpponents.map(opp => (
-                  <option key={opp} value={opp}>{opp}</option>
-                ))
-              ) : (
-                <option value={opponentType}>{opponentType}</option>
-              )}
-            </select>
+            {isLoadingPlayers ? (
+              <div style={{ color: '#555', fontSize: '1.1em', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ display: 'inline-block', animation: 'spin 1.5s linear infinite' }}>🍩</span>
+                Loading player list...
+              </div>
+            ) : playerFetchError ? (
+              <div style={{ color: '#d32f2f', fontSize: '1.1em', fontWeight: 'bold' }}>
+                Error: Could not retrieve player list
+              </div>
+            ) : (
+              <select
+                id="opponent-select"
+                value={opponentType}
+                onChange={(e) => setOpponentType(e.target.value)}
+                style={{ padding: '8px', borderRadius: '4px', background: 'blue', color: 'white', border: '1px solid darkblue', fontSize: '1.2em' }}
+              >
+                {availableOpponents.length > 0 ? (
+                  availableOpponents.map(opp => (
+                    <option key={opp} value={opp}>{opp}</option>
+                  ))
+                ) : (
+                  <option value={opponentType}>{opponentType}</option>
+                )}
+              </select>
+            )}
           </div>
 
           <div className="player-count-buttons">
