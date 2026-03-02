@@ -362,15 +362,20 @@ function App() {
     return (
       <div className="app">
         <div className="welcome">
+          <img
+            src="/jordan_scout.jpg"
+            alt="Scout Card Game"
+            style={{ maxWidth: '400px', width: '100%', height: 'auto', borderRadius: '15px', boxShadow: '0 8px 24px rgba(0,0,0,0.2)' }}
+          />
           <h1>Scout Card Game</h1>
 
-          <div className="opponent-selection-container" style={{ margin: '20px 0', textAlign: 'center' }}>
-            <label htmlFor="opponent-select" style={{ color: 'white', marginRight: '10px' }}>Opponent Type:</label>
+          <div className="opponent-selection-container" style={{ margin: '20px auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <label htmlFor="opponent-select" style={{ color: '#333', marginBottom: '8px', fontWeight: 'bold', fontSize: '0.85em' }}>Opponent Type:</label>
             <select
               id="opponent-select"
               value={opponentType}
               onChange={(e) => setOpponentType(e.target.value)}
-              style={{ padding: '8px', borderRadius: '4px', background: '#333', color: 'white', border: '1px solid #555' }}
+              style={{ padding: '8px', borderRadius: '4px', background: 'blue', color: 'white', border: '1px solid darkblue', fontSize: '1.2em' }}
             >
               {availableOpponents.length > 0 ? (
                 availableOpponents.map(opp => (
@@ -385,13 +390,14 @@ function App() {
           <div className="player-count-buttons">
             <button
               className="start-button"
-              onClick={() => handleNewGame(3)}
-              data-testid="start-3player-button"
+              onClick={() => handleNewGame(5)}
+              data-testid="start-5player-button"
             >
-              New 3-Player Game
+              New 5-Player Game
             </button>
             <button
               className="start-button"
+              style={{ backgroundColor: '#66bb6a' }}
               onClick={() => handleNewGame(4)}
               data-testid="start-4player-button"
             >
@@ -399,12 +405,17 @@ function App() {
             </button>
             <button
               className="start-button"
-              onClick={() => handleNewGame(5)}
-              data-testid="start-5player-button"
+              style={{ backgroundColor: '#66bb6a' }}
+              onClick={() => handleNewGame(3)}
+              data-testid="start-3player-button"
             >
-              New 5-Player Game
+              New 3-Player Game
             </button>
           </div>
+
+          <p style={{ color: '#666', fontSize: '0.85em', textAlign: 'center', maxWidth: '400px', margin: '15px auto 0' }}>
+            Note: The AI models were trained on 5-player games and will perform poorly in 3 and 4 player configurations.
+          </p>
         </div>
       </div>
     );
