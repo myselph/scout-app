@@ -49,11 +49,10 @@
   align-items: center;
   justify-content: center;
   background: #e0e0e0;
-  color: #555;
+  color: #888;
   font-size: 24px;
   font-weight: bold;
-  border-radius: 6px 6px 0 0;
-  transform: rotate(180deg);
+  border-radius: 0 0 6px 6px;
 }
 
 /* Mobile responsive */
