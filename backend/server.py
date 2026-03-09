@@ -23,7 +23,7 @@ from serialization import serialize_multi_round_game_state, serialize_move, dese
 SUPPORTED_PLAYERS = {
     "NeuralPlayer": lambda: numpy_neural_player.load_default_player(),
     "PlanningPlayer": lambda: PlanningPlayer(),
-    "GreedyShowPlayerWithFlip": lambda: GreedyShowPlayerWithFlip()
+    "GreedyShowPlayer": lambda: GreedyShowPlayer()
 }
 
 app = Flask(__name__)
