@@ -444,10 +444,6 @@ function App() {
               New 3-Player Game
             </button>
           </div>
-
-          <p style={{ color: '#666', fontSize: '0.85em', textAlign: 'center', maxWidth: '400px', margin: '15px auto 0' }}>
-            Note: The AI models were trained on 5-player games and will perform poorly in 3 and 4 player configurations.
-          </p>
         </div>
       </div>
     );
